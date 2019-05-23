@@ -1,7 +1,8 @@
 import os, re, subprocess, json, sys
 
 p1 = re.compile(r'import (.+)\n')
-p2 = re.compile(r'from (.+) import .*\n')
+p2 = re.compile(r'from (\S+) import.*\n')
+p3 = re.compile(r'import (\S+) as.*\n')
 imports = []
 path1 = sys.argv[1]
 for root, dirs, files in os.walk("./"+path1):
@@ -16,11 +17,15 @@ for root, dirs, files in os.walk("./"+path1):
                 for x in ele:
                     if x not in imports:
                         imports.append(str(x))
-
+print(imports)
 x = subprocess.Popen('pip list --format=json', stdout=subprocess.PIPE)
-string  = json.loads(x.stdout.read().decode('utf8'))
-
+pack_dict  = json.loads(x.stdout.read().decode('utf8'))
+ans_arr = []
 for i in imports:
-    for j in string:
+
+    for j in pack_dict:
         if i.lower() in j['name'].lower().split('.'):
-            print(j['name']+':'+j['version'])
+            ans_arr.append(j['name']+'=='+j['version'])
+f = open('requirements1.txt','w+')
+[f.write(a+'\n') for a in ans_arr]
+f.close()

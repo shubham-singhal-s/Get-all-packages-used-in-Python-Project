@@ -24,7 +24,7 @@ ans_arr = []
 for i in imports:
 
     for j in pack_dict:
-        if i.lower() in j['name'].lower().split('.'):
+        if i.lower().replace('-','') in j['name'].lower().replace('-','').split('.'):
             ans_arr.append(j['name']+'=='+j['version'])
 f = open('requirements1.txt','w+')
 [f.write(a+'\n') for a in ans_arr]
